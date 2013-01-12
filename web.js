@@ -21,7 +21,7 @@ app.get('/', function(request, response)
     response.send('Hello World!!');
 });
 
-app.get('/survey/:device/:timestamp/:temperature', function(request, response))
+app.get('/survey/:device/:timestamp/:temperature', function(request, response)
 {
     var Survey          = new Survey();
     survey.device       = request.params.device;
@@ -35,7 +35,7 @@ app.get('/survey/:device/:timestamp/:temperature', function(request, response))
         if(user)
             console.log("Survey: "+ survey.temperature + " saved!");
     });
-}
+});
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
