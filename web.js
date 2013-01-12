@@ -1,5 +1,6 @@
 var express = require('express');
 var User = require('./models/user.js');
+var User = require('./models/user.js');
 var app = express();
 
 app.get('/', function(request, response)
@@ -19,6 +20,22 @@ app.get('/', function(request, response)
 
     response.send('Hello World!!');
 });
+
+app.get('/survey/:device/:timestamp/:temperature', function(request, response))
+{
+    var Survey          = new Survey();
+    survey.device       = request.params.device;
+    survey.timestamp    = request.params.timestamp;
+    survey.temperature  = request.params.temperature;
+
+    survey.save(function(err,survey)
+    {
+        if(err)
+            console.log(err);
+        if(user)
+            console.log("Survey: "+ survey.temperature + " saved!");
+    });
+}
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
