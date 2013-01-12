@@ -11,4 +11,4 @@ var SurveySchema = new Schema
     temperature : Number
 });
 
-module.exports = mongoose.model("Survey", UserSchema);
+module.exports = mongoose.model("Survey", SurveySchema);
