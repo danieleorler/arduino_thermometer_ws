@@ -8,7 +8,7 @@ var db_url      = "mongodb://dalen:30mongo03@alex.mongohq.com:10004/thermometer"
 mongoose.connect(db_url,function(err){if(err) throw err;});
 
 
-app.use(function(req,res,next)
+app.use('/rest',function(req,res,next)
 {
     auth.isAuthenticated(req,res,next);
 });
@@ -28,11 +28,11 @@ app.get('/', function(request, response)
     //     if(user)
     //         console.log("User: "+ user.email + " saved!");
     // });
-
-    response.send('Hello World!!');
+    var now = new Date();
+    response.send('Hello World!!'+now);
 });
 
-app.get('/survey/insert', function(request, response)
+app.get('rest/survey/insert', function(request, response)
 {
     var survey = require('./controllers/survey.js');
     survey.insert(request,response);
