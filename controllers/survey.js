@@ -9,8 +9,9 @@ exports.insert = function(req,resp)
     var srvy = new Survey();
 
     srvy.device     = req.query.device;
-    srvy.timestamp  = req.query.timestamp;
-    srvy.temperature= req.query.temperature;
+    srvy.timestamp  = Date.now();
+    srvy.sensor     = req.query.sensor;
+    srvy.temperature= req.query.temperature/100;
 
     srvy.save(function(err,survey)
     {
