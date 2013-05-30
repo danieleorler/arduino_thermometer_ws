@@ -32,7 +32,7 @@ app.get('/', function(request, response)
     response.send('Hello World!!'+now);
 });
 
-app.get('rest/survey/insert', function(request, response)
+app.get('/rest/survey/insert', function(request, response)
 {
     var survey = require('./controllers/survey.js');
     survey.insert(request,response);
