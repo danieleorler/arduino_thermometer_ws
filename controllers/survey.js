@@ -1,6 +1,3 @@
-
-
-
 exports.insert = function(req,resp)
 {
     var Survey = require('../models/survey.js');
@@ -16,9 +13,6 @@ exports.insert = function(req,resp)
     srvy.save(function(err,survey)
     {
         if(err)
-            logger.log('error', 'Unable to save the survey', {params: req.querys});
-
-        if(survey)
-            logger.log('info', 'Survey saved succesfully', {}, function (err, level, msg, meta) { console.log(err); });
+            logger.log('error', 'Unable to save the survey', err);
     });
 };

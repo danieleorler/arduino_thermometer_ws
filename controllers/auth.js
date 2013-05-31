@@ -4,14 +4,10 @@ exports.joinParameters = function(parameters)
     var logger = require('../controllers/logger.js');
     var joined = '';
 
-    logger.log('info', 'Merging parameters: %j', parameters);
-
     for(i in parameters)
     {
         joined += parameters[i];
     }
-
-    // console.log('3 - joined parameters: '+joined);
 
     return joined;
 };
@@ -26,8 +22,6 @@ exports.createHash = function(privateKey, string)
 
     var hash = shasum.digest('hex');
 
-    // console.log('4 - hash is: '+hash);
-
     return hash;
 }
 
@@ -37,27 +31,29 @@ exports.isAuthenticated = function(req, res, next)
     var logger = require('../controllers/logger.js');
 
 
-    logger.log('info', 'Request parameters: %j', req.query);
-
     User.findOne({publicKey : req.get("ard-apikey")}, function(err, user)
     {
-        if(err) throw err;
-
-        // console.log('2 - user found');
+        if(err)
+        {
+            logger.log('error', 'You are not authorized!', err);
+            throw err;
+        }
 
         if(user)
         {
             var generatedHash = exports.createHash(user.privateKey, exports.joinParameters(req.query));
 
-            logger.log('info', 'Hash should be: %s', generatedHash);
-
             if(generatedHash == req.get("ard-hash"))
                 next();
             else
+            {
+                logger.log('error', 'You are not authorized!', req.query);
                 res.send(403, 'You are not authorized!');
+            }
         }
         else
         {
+            logger.log('error', 'Your apiKey was not recognized!', req.query);
             res.send(403, 'Your apiKey was not recognized!');
         }
     });

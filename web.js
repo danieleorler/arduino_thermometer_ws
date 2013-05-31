@@ -16,20 +16,8 @@ app.use('/rest',function(req,res,next)
 
 app.get('/', function(request, response)
 {
-    // var user        = new User();
-    // user.name       = "Test";
-    // user.surname    = "User";
-    // user.email      = "test@skodeg-o.com";
-    // user.password   = "password";
-    // user.save(function(err,user)
-    // {
-    //     if(err)
-    //         console.log(err);
-    //     if(user)
-    //         console.log("User: "+ user.email + " saved!");
-    // });
     var now = new Date();
-    response.send('Hello World!!'+now);
+    response.send('Hello World!! '+now);
 });
 
 app.get('/rest/survey/insert', function(request, response)
@@ -39,24 +27,6 @@ app.get('/rest/survey/insert', function(request, response)
 
     response.send(200,'Processing survey');
 });
-
-// app.get('/user/add/:name/:publicKey/:privateKey', function(req,res)
-// {
-//     var user = new User();
-//     user.name = 'viabasse';
-//     user.publicKey = req.params.publicKey;
-//     user.privateKey = req.params.privateKey;
-
-//     user.save(function(err,usr)
-//     {
-//         if(err)
-//             console.log(err);
-//         if(usr)
-//             response.send("User "+usr.name+" saved");
-
-//     });
-
-// });
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
