@@ -5,7 +5,7 @@ var SurveySchema = new mongoose.Schema
 ({
     timestamp   : String,
     device      : String,
-    sensro      : String,
+    sensor      : String,
     temperature : Number
 });
 
