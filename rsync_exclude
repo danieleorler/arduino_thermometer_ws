@@ -1,6 +1,0 @@
-.git/
-.gitignore
-rsync.sh
-rsync_exclude
-.DS_Store
-Procfile
