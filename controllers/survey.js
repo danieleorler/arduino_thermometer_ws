@@ -38,15 +38,15 @@ exports.findByPeriod = function(req,resp)
             if(error)
             {
                 logger.log('error', 'Unable to retrieve the surveys', error);
-                response.send(400,error);
+                resp.send(400,error);
             }
 
-            response.send(200,result);
+            resp.send(200,result);
         });
     }
     else
     {
         logger.log('error', 'From timestamp not correct', req.query);
-        response.send(400,"parameters incorrect");
+        resp.send(400,"parameters incorrect");
     }
 }
