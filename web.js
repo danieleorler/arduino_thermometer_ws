@@ -2,9 +2,10 @@ var express = require('express');
 var app = express();
 var auth = require('./controllers/auth.js');
 var logger = require('./controllers/logger.js');
+var config = require('./config');
 
 var mongoose    = require('mongoose');
-var db_url      = "mongodb://dalen:30mongo03@alex.mongohq.com:10004/thermometer";
+var db_url      = config.mongohq_url;
 mongoose.connect(db_url,function(err){if(err) throw err;});
 
 
