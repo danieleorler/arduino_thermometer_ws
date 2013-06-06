@@ -16,3 +16,37 @@ exports.insert = function(req,resp)
             logger.log('error', 'Unable to save the survey', err);
     });
 };
+
+exports.findByPeriod = function(req,resp)
+{
+    var Survey = require('../models/survey.js');
+    var logger = require('../controllers/logger.js');
+
+    if(req.query.from.length == 13)
+    {
+        if(req.query.to == undefined)
+            req.query.to = Date.now();
+
+        Survey
+        .find()
+        .select('sensor temperature timestamp')
+        .where('timestamp').gt(req.query.from).lt(req.query.to)
+        .where('sensor').equals(req.query.sensor)
+        .where('device').equals(req.query.device)
+        .exec(function(error, result)
+        {
+            if(error)
+            {
+                logger.log('error', 'Unable to retrieve the surveys', error);
+                response.send(400,error);
+            }
+
+            response.send(200,result);
+        });
+    }
+    else
+    {
+        logger.log('error', 'From timestamp not correct', req.query);
+        response.send(400,"parameters incorrect");
+    }
+}

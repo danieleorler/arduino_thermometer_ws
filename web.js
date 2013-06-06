@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var auth = require('./controllers/auth.js');
 var logger = require('./controllers/logger.js');
-var config = require('./config');
+var config = require('./config.js');
 
 var mongoose    = require('mongoose');
 var db_url      = config.mongohq_url;
@@ -27,6 +27,12 @@ app.get('/rest/survey/insert', function(request, response)
     survey.insert(request,response);
 
     response.send(200,'Processing survey');
+});
+
+app.get('/survey', function(request, response)
+{
+    var survey = require('./controllers/survey.js');
+    survey.findByPeriod(request,response);
 });
 
 var port = process.env.PORT || 5000;
