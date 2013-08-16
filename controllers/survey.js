@@ -50,3 +50,27 @@ exports.findByPeriod = function(req,resp)
         resp.send(400,"parameters incorrect");
     }
 }
+
+exports.lastMeasure = function(req,resp)
+{
+    var Survey = require('../models/survey.js');
+    var logger = require('../controllers/logger.js');
+
+    Survey
+    .find()
+    .select('sensor temperature device timestamp')
+    .where('sensor').equals(req.query.sensor)
+    .where('device').equals(req.query.device)
+    .sort('-_id')
+    .limit(1)
+    .exec(function(error, result)
+    {
+        if(error)
+        {
+            logger.log('error', 'Unable to retrieve last measure', error);
+            resp.send(400,error);
+        }
+
+        resp.send(200,result[0]);
+    });
+}
