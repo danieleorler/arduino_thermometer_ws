@@ -9,12 +9,19 @@ exports.insert = function(req,resp)
     srvy.timestamp  = Date.now();
     srvy.sensor     = req.query.sensor;
     srvy.temperature= req.query.temperature/100;
-
-    srvy.save(function(err,survey)
+    
+    if(srvy.temperature > 50 || srvy.temperature < -50)
     {
-        if(err)
-            logger.log('error', 'Unable to save the survey', err);
-    });
+        logger.log('error', 'temperature is not correct', srvy);
+    }
+    else
+    {
+        srvy.save(function(err,survey)
+        {
+            if(err)
+                logger.log('error', 'Unable to save the survey', err);
+        });
+    }
 };
 
 exports.findByPeriod = function(req,resp)
