@@ -13,6 +13,7 @@ exports.insert = function(req,resp)
     if(srvy.temperature > 50 || srvy.temperature < -50)
     {
         logger.log('error', 'temperature is not correct', srvy);
+        resp.status(401).send(srvy);
     }
     else
     {
@@ -45,16 +46,16 @@ exports.findByPeriod = function(req,resp)
             if(error)
             {
                 logger.log('error', 'Unable to retrieve the surveys', error);
-                resp.send(400,error);
+                resp.status(400).send(error);
             }
 
-            resp.send(200,result);
+            resp.status(200).send(result);
         });
     }
     else
     {
         logger.log('error', 'From timestamp not correct', req.query);
-        resp.send(400,"parameters incorrect");
+        resp.status(400).send("parameters incorrect");
     }
 }
 
@@ -75,9 +76,9 @@ exports.lastMeasure = function(req,resp)
         if(error)
         {
             logger.log('error', 'Unable to retrieve last measure', error);
-            resp.send(400,error);
+            resp.status(400).send(error);
         }
 
-        resp.send(200,result[0]);
+        resp.status(200).send(result[0]);
     });
 }
