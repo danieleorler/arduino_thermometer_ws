@@ -48,13 +48,13 @@ exports.isAuthenticated = function(req, res, next)
             else
             {
                 logger.log('error', 'You are not authorized!', req.query);
-                res.send(403, 'You are not authorized!');
+                res.status(403).send('You are not authorized!');
             }
         }
         else
         {
             logger.log('error', 'Your apiKey was not recognized!', req.query);
-            res.send(403, 'Your apiKey was not recognized!');
+            res.status(403).send('Your apiKey was not recognized!');
         }
     });
 }
