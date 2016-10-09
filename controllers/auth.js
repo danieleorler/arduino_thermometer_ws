@@ -1,7 +1,6 @@
 
 exports.joinParameters = function(parameters)
 {
-    var logger = require('../controllers/logger.js');
     var joined = '';
 
     for(i in parameters)
@@ -25,6 +24,26 @@ exports.createHash = function(privateKey, string)
     return hash;
 }
 
+exports.authenticate = function(user, request)
+{
+    if(user)
+    {
+        var generatedHash = exports.createHash(user.privateKey, exports.joinParameters(request.query));
+        if(generatedHash == request.get("ard-hash"))
+    	{
+        	return {"ok": true};
+    	}
+        else
+        {
+            return {"ok": false, "status": 403, "message": "You are not authorized!"};
+        }
+    }
+    else
+    {
+        return {"ok": false, "status": 403, "message": "Your apiKey was not recognized!"};
+    }
+}
+
 exports.isAuthenticated = function(req, res, next)
 {
     var User = require('../models/user.js');
@@ -39,22 +58,15 @@ exports.isAuthenticated = function(req, res, next)
             throw err;
         }
 
-        if(user)
+        var result = exports.authenticate(user, req);
+        if(result.ok)
         {
-            var generatedHash = exports.createHash(user.privateKey, exports.joinParameters(req.query));
-
-            if(generatedHash == req.get("ard-hash"))
-                next();
-            else
-            {
-                logger.log('error', 'You are not authorized!', req.query);
-                res.status(403).send('You are not authorized!');
-            }
+        	next();
         }
         else
-        {
-            logger.log('error', 'Your apiKey was not recognized!', req.query);
-            res.status(403).send('Your apiKey was not recognized!');
-        }
+    	{
+        	logger.log('error', result.message, req.query);
+        	res.status(result.status).send(result.message);
+    	}
     });
 }

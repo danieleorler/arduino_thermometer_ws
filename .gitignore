@@ -2,3 +2,4 @@
 rsync.sh
 rsync_exclude
 node_modules
+coverage
