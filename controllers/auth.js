@@ -3,7 +3,7 @@ exports.joinParameters = function(parameters)
 {
     var joined = '';
 
-    for(i in parameters)
+    for(var i in parameters)
     {
         joined += parameters[i];
     }
@@ -22,7 +22,7 @@ exports.createHash = function(privateKey, string)
     var hash = shasum.digest('hex');
 
     return hash;
-}
+};
 
 exports.authenticate = function(user, request)
 {
@@ -42,7 +42,7 @@ exports.authenticate = function(user, request)
     {
         return {"ok": false, "status": 403, "message": "Your apiKey was not recognized!"};
     }
-}
+};
 
 exports.isAuthenticated = function(req, res, next)
 {
@@ -69,4 +69,4 @@ exports.isAuthenticated = function(req, res, next)
         	res.status(result.status).send(result.message);
     	}
     });
-}
+};

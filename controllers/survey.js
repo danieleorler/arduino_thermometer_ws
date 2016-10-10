@@ -30,9 +30,9 @@ exports.findByPeriod = function(req,resp)
     var Survey = require('../models/survey.js');
     var logger = require('../controllers/logger.js');
 
-    if(req.query.from.length == 13)
+    if(req.query.from.length === 13)
     {
-        if(req.query.to == undefined)
+        if(req.query.to === undefined)
             req.query.to = Date.now();
 
         Survey
@@ -57,7 +57,7 @@ exports.findByPeriod = function(req,resp)
         logger.log('error', 'From timestamp not correct', req.query);
         resp.status(400).send("parameters incorrect");
     }
-}
+};
 
 exports.lastMeasure = function(req,resp)
 {
@@ -81,4 +81,4 @@ exports.lastMeasure = function(req,resp)
 
         resp.status(200).send(result[0]);
     });
-}
+};

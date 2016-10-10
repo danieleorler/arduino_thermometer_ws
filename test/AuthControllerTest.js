@@ -29,8 +29,8 @@ describe('controllers/auth.js', function()
     	it("should correctly authenticate request", function()
 		{
     		var user = {"privateKey": "yioAA8sp"};
-    		var request = {"query": {"device":"viabasse","sensor":"in","temperature":2130}}
-    		request.get = function(a) { return "3922bf7fc1e70bf052094431a0db08043c177d21"; }
+    		var request = {"query": {"device":"viabasse","sensor":"in","temperature":2130}};
+    		request.get = function(a) { return "3922bf7fc1e70bf052094431a0db08043c177d21"; };
     		var result = auth.authenticate(user, request);
     		var expected = {"ok": true};
     		assert.deepEqual(expected, result);
@@ -39,8 +39,8 @@ describe('controllers/auth.js', function()
     	it("should block request with non-matching hash", function()
 		{
     		var user = {"privateKey": "yioAA8sp"};
-    		var request = {"query": {"device":"viabasse","sensor":"in","temperature":2130}}
-    		request.get = function(a) { return "3922bf7fc1e70bf05294431a0db08043c177d21"; }
+    		var request = {"query": {"device":"viabasse","sensor":"in","temperature":2130}};
+    		request.get = function(a) { return "3922bf7fc1e70bf05294431a0db08043c177d21"; };
     		var result = auth.authenticate(user, request);
     		var expected = {"ok": false, "status": 403, message:"You are not authorized!"};
     		assert.deepEqual(expected, result);
@@ -49,8 +49,8 @@ describe('controllers/auth.js', function()
     	it("should block request without user", function()
 		{
     		var user = null;
-    		var request = {"query": {"device":"viabasse","sensor":"in","temperature":2130}}
-    		request.get = function(a) { return "3922bf7fc1e70bf05294431a0db08043c177d21"; }
+    		var request = {"query": {"device":"viabasse","sensor":"in","temperature":2130}};
+    		request.get = function(a) { return "3922bf7fc1e70bf05294431a0db08043c177d21"; };
     		var result = auth.authenticate(user, request);
     		var expected = {"ok": false, "status": 403, message:"Your apiKey was not recognized!"};
     		assert.deepEqual(expected, result);
