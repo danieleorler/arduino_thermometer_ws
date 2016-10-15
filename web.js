@@ -1,43 +1,97 @@
-var express = require('express');
+var express = require("express");
 var app = express();
-var auth = require('./controllers/auth.js');
-var logger = require('./controllers/logger.js');
-var config = require('./config.js');
+var AWS = require("aws-sdk");
+var logger = require("./controllers/logger.js");
+var config = require("./config.js");
 
-var mongoose    = require('mongoose');
+let AuthenticationException = require("./exceptions/AuthenticationException.js");
+let InternalErrorException = require("./exceptions/InternalErrorException.js");
+
+var mongoose    = require("mongoose");
 var db_url      = config.mongohq_url;
 mongoose.connect(db_url,function(err){if(err) throw err;});
 
-
-app.use('/rest',function(req,res,next)
-{
-    auth.isAuthenticated(req,res,next);
+AWS.config.update({
+	  region: config.dynamodb.region,
+	  endpoint: config.dynamodb.endpoint,
+	  accessKeyId: config.dynamodb.accessKeyId,
+	  secretAccessKey: config.dynamodb.secretAccessKey
 });
 
+var dynamodb = new AWS.DynamoDB.DocumentClient();
+var Authenticator = require("./lib/Authenticator.js");
+var DynamoDBUserDao = require("./dao/DynamoDBUserDao.js");
 
-app.get('/', function(request, response)
+var dynamoDBUserDao = new DynamoDBUserDao(dynamodb, logger);
+var authenticator = new Authenticator(dynamoDBUserDao, logger);
+
+app.use("/rest",function(req,res,next)
+{
+	authenticator.isAuthenticated(req.get("ard-apikey"), req.query, req.get("ard-hash"))
+	.then((allowed) => {
+		if(allowed) {
+			next();
+		} else {
+			res.status(401).send("You are not allowed to access this resource");
+		}
+	})
+	.catch((error) => {
+		res.status(500).send("Internal error");
+	});
+});
+
+app.get("/rest/survey/insert2", function(request, response) {
+  let AWS = require("aws-sdk");
+  
+
+  
+  let dynamodb = new AWS.DynamoDB.DocumentClient();
+
+  let DynamoDBUserDao = require("./dao/DynamoDBUserDao.js");
+  let dynamoDBUserDao = new DynamoDBUserDao(dynamodb, null);
+  
+  let getUser = dynamoDBUserDao.getUserByPublicKey(request.query.k);
+  
+  getUser
+  	.then((user) => { response.status(200).send(user); })
+  	.catch((error) => {
+  		switch (error.constructor) {
+  			case AuthenticationException:
+  				console.log(error.constructor);
+  				return response.status(401).send(error);
+  			case InternalErrorException:
+  				console.log(error.constructor);
+  				return response.status(500).send(error);
+  			default:
+  				console.log(error.constructor);
+  				return response.status(500).send(error);
+  		}
+  	});
+});
+
+app.get("/", function(request, response)
 {
     var now = new Date();
-    response.send('Hello World!! '+now);
+    response.send("Hello World!! "+now);
 });
 
-app.get('/rest/survey/insert', function(request, response)
+app.get("/rest/survey/insert", function(request, response)
 {
-    var survey = require('./controllers/survey.js');
+    var survey = require("./controllers/survey.js");
     survey.insert(request,response);
 
-    response.send(200,'Processing survey');
+    response.send(200,"Processing survey");
 });
 
-app.get('/survey', function(request, response)
+app.get("/survey", function(request, response)
 {
-    var survey = require('./controllers/survey.js');
+    var survey = require("./controllers/survey.js");
     survey.findByPeriod(request,response);
 });
 
-app.get('/survey/last', function(request, response)
+app.get("/survey/last", function(request, response)
 {
-    var survey = require('./controllers/survey.js');
+    var survey = require("./controllers/survey.js");
     survey.lastMeasure(request,response);
 });
 
