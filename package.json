@@ -24,7 +24,7 @@
   "scripts":
   {
   	"lint": "eslint --ignore-path .gitignore .",
-  	"test": "npm run lint; istanbul cover _mocha -- -R spec"
+  	"test": "npm run lint; istanbul cover _mocha -- --recursive -R spec"
   }
   
 }

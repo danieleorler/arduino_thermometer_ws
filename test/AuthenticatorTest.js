@@ -38,14 +38,11 @@ describe("Authenticator.js", function()
 			"name": "viabasse"
 		};
     	
-    	beforeEach(() => {
-    		dao = new DynamoDBUserDao(null, null);
-        });
+    	beforeEach(() => { dao = new DynamoDBUserDao(null, null); });
     	
     	it("should correctly authenticate request", function(done)
 		{
     		sinon.stub(dao, "getUserByPublicKey", () => {
-    			console.log("mocked");
     			return new Promise((resolve, reject) => { resolve(user); });
 			});
     		
@@ -61,7 +58,6 @@ describe("Authenticator.js", function()
     	it("should detect when the provided hash is wrong", function(done)
 		{
     		sinon.stub(dao, "getUserByPublicKey", () => {
-    			console.log("mocked");
     			return new Promise((resolve, reject) => { resolve(user); });
 			});
     		
@@ -77,7 +73,6 @@ describe("Authenticator.js", function()
     	it("should not authenticate an unknown publicKey", function(done)
 		{
     		sinon.stub(dao, "getUserByPublicKey", () => {
-    			console.log("mocked");
     			return new Promise((resolve, reject) => { reject(); });
 			});
     		
