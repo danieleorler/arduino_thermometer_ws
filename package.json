@@ -11,9 +11,10 @@
   "devDependencies":
   {
   	"mocha": "3.1.*",
-  	"jshint": "2.9.*",
+  	"eslint": "3.8.*",
   	"istanbul": "0.4.*",
-  	"coveralls": "2.11.*"
+  	"coveralls": "2.11.*",
+  	"sinon": "1.17.*"
   },
   "engines":
   {
@@ -22,7 +23,7 @@
   },
   "scripts":
   {
-  	"lint": "jshint .",
+  	"lint": "eslint --ignore-path .gitignore .",
   	"test": "npm run lint; istanbul cover _mocha -- -R spec"
   }
   
