@@ -1,10 +1,12 @@
 version: '2'
 services:
   db:
-    image: deangiberson/aws-dynamodb-local
+    image: fitz/dynamodb-local
     restart: always
     ports:
       - "8001:8000"
+    command:
+      -sharedDb
   node:
     depends_on:
       - db

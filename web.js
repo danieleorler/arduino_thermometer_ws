@@ -73,10 +73,11 @@ app.get("/survey", function(request, response)
     survey.findByPeriod(request,response);
 });
 
-app.get("/survey/last", function(request, response)
+app.get("/survey/last", function(req, response)
 {
-    var survey = require("./controllers/survey.js");
-    survey.lastMeasure(request,response);
+	measurementService.lastMeasurement(req.query.device, req.query.sensor)
+		.then( (result) => { response.status(200).send(result); } )
+		.catch( (error) => { response.status(500).send(error); } );
 });
 
 var port = process.env.PORT || 5000;

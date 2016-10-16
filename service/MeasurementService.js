@@ -14,6 +14,10 @@ class MeasurementService {
 	    }
 	}
 	
+	lastMeasurement(device, sensor) {
+		return this.dao.getLastMeasurement(device, sensor);
+	}
+	
 }
 
 module.exports = MeasurementService;

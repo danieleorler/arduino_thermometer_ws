@@ -6,11 +6,10 @@ var MeasurementService = require("../../service/MeasurementService.js");
 var InvalidArgumentException = require("../../exceptions/InvalidArgumentException.js");
 var sinon = require("sinon");
 
-describe("DynamoDBMeasurementDao.js", () => {
+describe("MeasurementService.js", () => {
 	
     describe("#isAuthenticated", function() {
 	
-		
 		let dao = null;
 		let measurementService = null;
 		let stub = null;
