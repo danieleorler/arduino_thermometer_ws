@@ -18,7 +18,7 @@ class DynamoDBMeasurementDao {
 			.then((data) => {})
 			.catch((error) => {
 				this.logger.log("error", "Error " + JSON.stringify(error) + " saving survey: " + JSON.stringify(measurement));
-		});
+			});
 	}
 	
 	getLastMeasurement(device, sensor) {
@@ -26,12 +26,8 @@ class DynamoDBMeasurementDao {
 		let params = {
 			TableName : "arduino_thermometer.measurement",
 			KeyConditionExpression: "#id = :id",
-			ExpressionAttributeNames:{
-				"#id": "id"
-			},
-			ExpressionAttributeValues: {
-				":id": measurement.id
-			},
+			ExpressionAttributeNames: { "#id": "id" },
+			ExpressionAttributeValues: { ":id": measurement.id },
 			Limit: 1,
 			ScanIndexForward: false
 		};
@@ -46,7 +42,33 @@ class DynamoDBMeasurementDao {
 			})
 			.catch((error) => {
 				throw new InternalErrorException(error, "Error retrieving last measurement from database");
-		});
+			});
+	}
+	
+	getMeasurementsByPeriod(device, sensor, from, to) {
+		let measurement = new Measurement(device, sensor, null);
+		let params = {
+			TableName : "arduino_thermometer.measurement",
+			KeyConditionExpression: "#id = :id AND #timestamp BETWEEN :from AND :to",
+			ExpressionAttributeNames: {
+				"#id": "id",
+				"#timestamp": "timestamp"
+			},
+			ExpressionAttributeValues: {
+				":id": measurement.id,
+				":from": from,
+				":to": to
+			},
+			ScanIndexForward: false
+		};
+		
+		return this.db.query(params).promise()
+			.then((data) => {
+				return data.Items;
+			})
+			.catch((error) => {
+				throw new InternalErrorException(error, "Error retrieving last measurement from database");
+			});
 	}
 }
 

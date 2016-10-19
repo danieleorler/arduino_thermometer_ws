@@ -18,6 +18,22 @@ class MeasurementService {
 		return this.dao.getLastMeasurement(device, sensor);
 	}
 	
+	measurementsByPeriod(device, sensor, from, to) {
+		return Promise.resolve()
+			.then( () => {
+				if(from.length !== 13) {
+					throw new InvalidArgumentException(from, "The lower bound of the specified period is invalid");
+				}
+				if(to && to < from) {
+					throw new InvalidArgumentException(from, "The lower bound of the specified period must be greater than the lower bound");
+				}
+				if(to === undefined) {
+					to = (Date.now()).toString();
+				}
+				return this.dao.getMeasurementsByPeriod(device, sensor, from, to);
+			});
+	}
+	
 }
 
 module.exports = MeasurementService;

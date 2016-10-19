@@ -4,8 +4,9 @@ var AWS = require("aws-sdk");
 var logger = require("./controllers/logger.js");
 var config = require("./config.js");
 
-let AuthenticationException = require("./exceptions/AuthenticationException.js");
-let InternalErrorException = require("./exceptions/InternalErrorException.js");
+var AuthenticationException = require("./exceptions/AuthenticationException.js");
+var InternalErrorException = require("./exceptions/InternalErrorException.js");
+var InvalidArgumentException = require("./exceptions/InvalidArgumentException.js");
 
 var mongoose    = require("mongoose");
 var db_url      = config.mongohq_url;
@@ -67,10 +68,18 @@ app.get("/rest/survey/insert", function(req, res)
 	}
 });
 
-app.get("/survey", function(request, response)
+app.get("/survey", function(req, response)
 {
-    var survey = require("./controllers/survey.js");
-    survey.findByPeriod(request,response);
+	measurementService.measurementsByPeriod(req.query.device, req.query.sensor, req.query.from, req.query.to)
+		.then( (result) => { response.status(200).send(result); } )
+		.catch( (error) => {
+			switch(error.constructor) {
+				case InvalidArgumentException:
+					return response.status(400).send(error);
+				default:
+					return response.status(500).send(error);
+			}
+		} );
 });
 
 app.get("/survey/last", function(req, response)

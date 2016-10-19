@@ -29,11 +29,38 @@ describe("DynamoDBMeasurementDao.js", () => {
 		}
 	};
 	
+	let listMeasurements = {
+	    "Items": [
+	        {
+	            "temperature": -1.23,
+	            "sensor": "in",
+	            "id": "viabasse_in",
+	            "device": "viabasse",
+	            "timestamp": "1476622947579"
+	        },
+	        {
+	            "temperature": 10,
+	            "sensor": "in",
+	            "id": "viabasse_in",
+	            "device": "viabasse",
+	            "timestamp": "1476622881674"
+	        },
+	        {
+	            "temperature": 9,
+	            "sensor": "in",
+	            "id": "viabasse_in",
+	            "device": "viabasse",
+	            "timestamp": "1476620456704"
+	        }
+	    ],
+	    "Count": 3,
+	    "ScannedCount": 3
+	};
+	
 	before(() => { sinon.stub(dynamodb, "query", () => { return dummyQuery; }); });
 	
     describe("#getLastMeasurement(device, sensor)", function()
     {
-
         it("should return the last measurement", (done) => {
     		sinon.stub(dummyQuery, "promise", () => {
     			return new Promise((resolve, reject) => { resolve(lastMeasurement); });
@@ -73,6 +100,31 @@ describe("DynamoDBMeasurementDao.js", () => {
     		});
     		let dao = new DynamoDBMeasurementDao(dynamodb, null);
     		dao.getLastMeasurement("viabasse", "in")
+    			.catch((error) => { assert(error instanceof InternalErrorException); done(); });
+        	
+        });
+    });
+    
+    describe("#getMeasurementsByPeriod(device, sensor, from, to)", function() {
+    	
+        it("should return a list measurements", (done) => {
+        	dummyQuery.promise.restore();
+    		sinon.stub(dummyQuery, "promise", () => {
+    			return new Promise((resolve, reject) => { resolve(listMeasurements); });
+    		});
+    		let dao = new DynamoDBMeasurementDao(dynamodb, null);
+    		dao.getMeasurementsByPeriod("viabasse", "in", 1436622947600, 1476622947600)
+    			.then((measurements) => { assert.deepEqual(listMeasurements.Items, measurements); done(); });
+        	
+        });
+    	
+        it("should throw an exception when an error arises communicating with the db", (done) => {
+        	dummyQuery.promise.restore();
+    		sinon.stub(dummyQuery, "promise", () => {
+    			return new Promise((resolve, reject) => { reject({}); });
+    		});
+    		let dao = new DynamoDBMeasurementDao(dynamodb, null);
+    		dao.getMeasurementsByPeriod("viabasse", "in", 1436622947600, 1476622947600)
     			.catch((error) => { assert(error instanceof InternalErrorException); done(); });
         	
         });
