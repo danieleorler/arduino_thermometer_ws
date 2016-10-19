@@ -11,7 +11,7 @@ class DynamoDBUserDao {
 	getUserByPublicKey(publicKey) {
 		
 		let params = {
-		    TableName: "User",
+		    TableName: "arduino_thermometer.user",
 		    Key: {
 		        publicKey: publicKey
 		    }

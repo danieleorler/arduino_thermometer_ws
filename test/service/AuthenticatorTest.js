@@ -1,6 +1,6 @@
 var assert = require("assert");
-var Authenticator = require("../lib/Authenticator.js");
-var DynamoDBUserDao = require("../dao/DynamoDBUserDao.js");
+var Authenticator = require("../../service/Authenticator.js");
+var DynamoDBUserDao = require("../../dao/DynamoDBUserDao.js");
 var sinon = require("sinon");
 
 describe("Authenticator.js", function()

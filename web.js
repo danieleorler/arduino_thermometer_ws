@@ -4,8 +4,9 @@ var AWS = require("aws-sdk");
 var logger = require("./controllers/logger.js");
 var config = require("./config.js");
 
-let AuthenticationException = require("./exceptions/AuthenticationException.js");
-let InternalErrorException = require("./exceptions/InternalErrorException.js");
+var AuthenticationException = require("./exceptions/AuthenticationException.js");
+var InternalErrorException = require("./exceptions/InternalErrorException.js");
+var InvalidArgumentException = require("./exceptions/InvalidArgumentException.js");
 
 var mongoose    = require("mongoose");
 var db_url      = config.mongohq_url;
@@ -19,11 +20,19 @@ AWS.config.update({
 });
 
 var dynamodb = new AWS.DynamoDB.DocumentClient();
-var Authenticator = require("./lib/Authenticator.js");
+var Authenticator = require("./service/Authenticator.js");
+var MeasurementService = require("./service/MeasurementService.js");
+
 var DynamoDBUserDao = require("./dao/DynamoDBUserDao.js");
+var DynamoDBMeasurementDao = require("./dao/DynamoDBMeasurementDao.js");
 
 var dynamoDBUserDao = new DynamoDBUserDao(dynamodb, logger);
+var dynamoDBMeasurementDao = new DynamoDBMeasurementDao(dynamodb, logger);
+
 var authenticator = new Authenticator(dynamoDBUserDao, logger);
+var measurementService = new MeasurementService(dynamoDBMeasurementDao);
+
+var Measurement = require("./model/Measurement.js");
 
 app.use("/rest",function(req,res,next)
 {
@@ -40,59 +49,44 @@ app.use("/rest",function(req,res,next)
 	});
 });
 
-app.get("/rest/survey/insert2", function(request, response) {
-  let AWS = require("aws-sdk");
-  
-
-  
-  let dynamodb = new AWS.DynamoDB.DocumentClient();
-
-  let DynamoDBUserDao = require("./dao/DynamoDBUserDao.js");
-  let dynamoDBUserDao = new DynamoDBUserDao(dynamodb, null);
-  
-  let getUser = dynamoDBUserDao.getUserByPublicKey(request.query.k);
-  
-  getUser
-  	.then((user) => { response.status(200).send(user); })
-  	.catch((error) => {
-  		switch (error.constructor) {
-  			case AuthenticationException:
-  				console.log(error.constructor);
-  				return response.status(401).send(error);
-  			case InternalErrorException:
-  				console.log(error.constructor);
-  				return response.status(500).send(error);
-  			default:
-  				console.log(error.constructor);
-  				return response.status(500).send(error);
-  		}
-  	});
-});
-
 app.get("/", function(request, response)
 {
     var now = new Date();
     response.send("Hello World!! "+now);
 });
 
-app.get("/rest/survey/insert", function(request, response)
+app.get("/rest/survey/insert", function(req, res)
 {
-    var survey = require("./controllers/survey.js");
-    survey.insert(request,response);
-
-    response.send(200,"Processing survey");
+	let measurement = new Measurement(req.query.device, req.query.sensor, req.query.temperature);
+    
+	try {
+		measurementService.insert(measurement);
+		res.status(200).send("Processing survey");
+	} catch(e) {
+		logger.log("error", e.message, e.value);
+		res.status(400).send(e.message);
+	}
 });
 
-app.get("/survey", function(request, response)
+app.get("/survey", function(req, response)
 {
-    var survey = require("./controllers/survey.js");
-    survey.findByPeriod(request,response);
+	measurementService.measurementsByPeriod(req.query.device, req.query.sensor, req.query.from, req.query.to)
+		.then( (result) => { response.status(200).send(result); } )
+		.catch( (error) => {
+			switch(error.constructor) {
+				case InvalidArgumentException:
+					return response.status(400).send(error);
+				default:
+					return response.status(500).send(error);
+			}
+		} );
 });
 
-app.get("/survey/last", function(request, response)
+app.get("/survey/last", function(req, response)
 {
-    var survey = require("./controllers/survey.js");
-    survey.lastMeasure(request,response);
+	measurementService.lastMeasurement(req.query.device, req.query.sensor)
+		.then( (result) => { response.status(200).send(result); } )
+		.catch( (error) => { response.status(500).send(error); } );
 });
 
 var port = process.env.PORT || 5000;
