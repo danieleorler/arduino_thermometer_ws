@@ -1,14 +1,10 @@
 var config =
 {
-    mongohq_url : 'mongodb://mongo_url',
-    couchdb :
-    {
-        host : 'host',
-        port : 443,
-        db   : 'db_name',
-        user : 'username',
-        pass : 'password',
-        ssl  : false
+    dynamodb : {
+        region: process.env.AWS_REGION || "us-west-2",
+        endpoint: process.env.AWS_DYNAMODB_ENDPOINT || "http://db:8000",
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "local",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "whatever"
     }
 };
 

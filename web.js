@@ -1,16 +1,12 @@
 var express = require("express");
 var app = express();
 var AWS = require("aws-sdk");
-var logger = require("./controllers/logger.js");
+var logger = require("winston");
 var config = require("./config.js");
 
 var AuthenticationException = require("./exceptions/AuthenticationException.js");
 var InternalErrorException = require("./exceptions/InternalErrorException.js");
 var InvalidArgumentException = require("./exceptions/InvalidArgumentException.js");
-
-var mongoose    = require("mongoose");
-var db_url      = config.mongohq_url;
-mongoose.connect(db_url,function(err){if(err) throw err;});
 
 AWS.config.update({
 	  region: config.dynamodb.region,
