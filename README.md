@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/danieleorler/arduino_thermometer_ws/badge.svg?branch=master)](https://coveralls.io/github/danieleorler/arduino_thermometer_ws?branch=master)
+
 # Development
 
 ### Install dependencies
