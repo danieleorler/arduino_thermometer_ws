@@ -58,8 +58,7 @@ class DynamoDBMeasurementDao {
 				":id": measurement.id,
 				":from": from,
 				":to": to
-			},
-			ScanIndexForward: false
+			}
 		};
 		
 		return this.db.query(params).promise()
